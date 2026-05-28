@@ -35,7 +35,7 @@ interface InputsTabProps {
 
 export default function InputsTab({ inputs, onChange, onGenerate, loading }: InputsTabProps) {
   const handleChange = (key: keyof ModelInputs, val: string) => {
-    const num = parseFloat(val);
+    const num = parseFloat(val.replace(',', '.'));
     if (!isNaN(num)) onChange({ ...inputs, [key]: num });
   };
 
@@ -53,10 +53,8 @@ export default function InputsTab({ inputs, onChange, onGenerate, loading }: Inp
                 <span className="text-gray-600">{field.unit}</span>
               </label>
               <input
-                type="number"
-                step={field.step}
-                min={field.min}
-                max={field.max}
+                type="text"
+                inputMode="decimal"
                 value={inputs[field.key]}
                 onChange={(e) => handleChange(field.key, e.target.value)}
                 className="w-full bg-[#0f0f0f] border border-[#2e2e2e] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 transition-colors"

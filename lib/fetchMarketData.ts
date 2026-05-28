@@ -34,6 +34,23 @@ async function fetchFredYoY(seriesId: string): Promise<number | null> {
   }
 }
 
+async function fetchFredMoM(seriesId: string): Promise<number | null> {
+  if (!FRED_KEY) return null;
+  try {
+    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${FRED_KEY}&file_type=json&sort_order=desc&limit=3`;
+    const res = await fetch(url, { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const obs = (data.observations ?? []).filter((o: { value: string }) => o.value !== '.');
+    if (obs.length < 2) return null;
+    const latest = parseFloat(obs[0].value);
+    const prev = parseFloat(obs[1].value);
+    return Math.round(((latest - prev) / prev) * 10000) / 100;
+  } catch {
+    return null;
+  }
+}
+
 async function fetchBlsCpi(): Promise<number | null> {
   try {
     const body = {
@@ -134,8 +151,8 @@ export async function fetchMarketData(): Promise<MarketData> {
     fetchFredYoY('M2SL'),
     fetchFredSeries('UMCSENT'),
     fetchFredSeries('MICH'),
-    fetchFredSeries('IR'),
-    fetchFredSeries('CES0500000003'),
+    fetchFredMoM('IR'),
+    fetchFredYoY('CES0500000003'),
     fetchBlsCpi(),
   ]);
 
