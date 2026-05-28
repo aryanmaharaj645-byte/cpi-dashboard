@@ -13,14 +13,16 @@ interface Metric {
   color?: string;
 }
 
+function n(v: unknown): number { return Number(v) || 0; }
+
 export default function MetricBar({ data, loading }: MetricBarProps) {
   const metrics: Metric[] = data ? [
-    { label: 'Crude Oil', value: `$${data.oil.toFixed(2)}/bbl` },
-    { label: 'Retail Gas', value: `$${data.gas.toFixed(2)}/gal` },
-    { label: 'PPI MoM', value: `${data.ppi > 0 ? '+' : ''}${data.ppi.toFixed(1)}%`, color: data.ppi > 0 ? '#ef4444' : '#22c55e' },
-    { label: 'Wages YoY', value: `${data.wages.toFixed(1)}%` },
-    { label: 'Fed Funds', value: `${data.fedRate.toFixed(2)}%` },
-    { label: 'Prev CPI YoY', value: `${data.prevCpi.toFixed(1)}%`, color: data.prevCpi >= 3.7 ? '#ef4444' : data.prevCpi <= 3.2 ? '#22c55e' : '#3b82f6' },
+    { label: 'Crude Oil', value: `$${n(data.oil).toFixed(2)}/bbl` },
+    { label: 'Retail Gas', value: `$${n(data.gas).toFixed(2)}/gal` },
+    { label: 'PPI MoM', value: `${n(data.ppi) > 0 ? '+' : ''}${n(data.ppi).toFixed(1)}%`, color: n(data.ppi) > 0 ? '#ef4444' : '#22c55e' },
+    { label: 'Wages YoY', value: `${n(data.wages).toFixed(1)}%` },
+    { label: 'Fed Funds', value: `${n(data.fedRate).toFixed(2)}%` },
+    { label: 'Prev CPI YoY', value: `${n(data.prevCpi).toFixed(1)}%`, color: n(data.prevCpi) >= 3.7 ? '#ef4444' : n(data.prevCpi) <= 3.2 ? '#22c55e' : '#3b82f6' },
   ] : [];
 
   return (
